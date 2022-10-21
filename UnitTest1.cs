@@ -14,12 +14,15 @@ public class Tests : PageTest
     {
         await Page.GotoAsync("https://demo.realworld.io/");
 
+        Random rnd = new Random();
+        int num = rnd.Next();
+
         // Expect a title "to contain" a substring.
         await Expect(Page).ToHaveTitleAsync(new Regex("Home"));
 
         // create a locator
-        var userName = "JohnSmith92";
-        var email = "John.Smith92@gmail.com";
+        var userName = "JohnSmith" + num;
+        var email = "John.Smith" + num + "@gmail.com";
         var passWord = "genericPassword1234!";
         var signUp = Page.Locator("text=Sign up");
         var userNameInput = Page.GetByPlaceholder("Username");
@@ -28,10 +31,7 @@ public class Tests : PageTest
 
         var signUpSubmitButton = Page.Locator("button", new() { HasTextString = "Sign up" });
 
-        // Expect an attribute "to be strictly equal" to the value.
-        //await Expect(getStarted).ToHaveAttributeAsync("href", "/docs/intro");
-
-        // Click the get started link.
+        // Navigate to Sign Up Page
         await signUp.ClickAsync();
 
         // Expects the URL to contain intro.
@@ -43,6 +43,21 @@ public class Tests : PageTest
 
         await signUpSubmitButton.ClickAsync();
 
+        //Verification Locator
+        var loggedInUsername = Page.GetByText(userName);
+        var settings = Page.GetByText("settings");
+        //var settings2 = Page.Locator("nav-link", new() { HasTextString = "settings" });
+        var editorHREF = Page.Locator("a", new() { HasTextString = "editor" });
+        var editor = Page.GetByText("New Article");
+        var signIn = Page.GetByText("Sign in");
+
+
+        await Expect(settings).ToBeVisibleAsync();
+        await Expect(loggedInUsername).ToBeVisibleAsync();
+
+        await loggedInUsername.ClickAsync();
+
+        await editor.ClickAsync();
     }
     [Test]
     public async Task LoginAndVerifySuccess()
